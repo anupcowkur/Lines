@@ -1,4 +1,4 @@
-package com.anupcowkur.triangles.triangles
+package com.anupcowkur.lines.lines
 
 import android.os.Bundle
 

@@ -2,14 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class Triangles extends StatefulWidget {
+class Lines extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _TrianglesState();
+    return _LinesState();
   }
 }
 
-class _TrianglesState extends State<Triangles>
+class _LinesState extends State<Lines>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   List<Vertex> vertices;

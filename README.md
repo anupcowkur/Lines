@@ -1,4 +1,4 @@
-# triangles
+# lines
 
 A new Flutter project.
 

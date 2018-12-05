@@ -1,4 +1,4 @@
-import 'package:triangles/triangles.dart';
+import 'package:lines/lines.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -9,8 +9,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Triangles',
-      home: Triangles(),
+      title: 'Lines',
+      home: Lines(),
     );
   }
 }
