@@ -13,7 +13,7 @@ class _TrianglesState extends State<Triangles>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   List<Vertex> vertices;
-  final int numberOfVertices = 30;
+  final int numberOfVertices = 200;
   final Color color = Colors.black;
   final double vertexSize = 1.5;
 
@@ -49,7 +49,7 @@ class _TrianglesState extends State<Triangles>
     return Scaffold(
       body: CustomPaint(
         foregroundPainter:
-            VertexPainter(vertices: vertices, controller: _controller),
+            LinePainter(vertices: vertices, controller: _controller),
         size: Size(MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height),
       ),
@@ -62,15 +62,33 @@ class _TrianglesState extends State<Triangles>
   }
 }
 
-class VertexPainter extends CustomPainter {
+class LinePainter extends CustomPainter {
   List<Vertex> vertices;
   AnimationController controller;
 
-  VertexPainter({this.vertices, this.controller});
+  LinePainter({this.vertices, this.controller});
 
   @override
   void paint(Canvas canvas, Size canvasSize) {
-    vertices.forEach((it) => it.draw(canvas, canvasSize));
+    Paint paint = new Paint()
+      ..color = Colors.black
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.fill;
+
+    for (int i = 0; i < vertices.length - 2; i++) {
+      try {
+        vertices[i].adjustWithCanvas(canvasSize);
+
+        canvas.drawCircle(
+            Offset(vertices[i].x, vertices[i].y), vertices[i].radius, paint);
+
+        canvas.drawLine(Offset(vertices[i].x, vertices[i].y),
+            Offset(vertices[i + 1].x, vertices[i + 1].y), paint);
+
+        canvas.drawCircle(Offset(vertices[i + 1].x, vertices[i + 1].y),
+            vertices[i + 1].radius, paint);
+      } catch (e) {}
+    }
   }
 
   @override
@@ -94,17 +112,10 @@ class Vertex {
     this.radius = vertexSize;
   }
 
-  draw(Canvas canvas, Size canvasSize) {
-    Paint paint = new Paint()
-      ..color = colour
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.fill;
-
+  adjustWithCanvas(Size canvasSize) {
     assignRandomPositionIfUninitialized(canvasSize);
 
     randomlyChangeDirectionIfEdgeReached(canvasSize);
-
-    canvas.drawCircle(Offset(x, y), radius, paint);
   }
 
   void assignRandomPositionIfUninitialized(Size canvasSize) {
@@ -118,9 +129,10 @@ class Vertex {
   }
 
   updatePosition() {
-    var a = 180 - (direction + 90);
-    direction > 0 && direction < 180 ? x += speed : x -= speed;
-    direction > 90 && direction < 270 ? y += speed : y -= speed;
+    try {
+      direction > 0 && direction < 180 ? x += speed : x -= speed;
+      direction > 90 && direction < 270 ? y += speed : y -= speed;
+    } catch (e) {}
   }
 
   randomlyChangeDirectionIfEdgeReached(Size canvasSize) {
