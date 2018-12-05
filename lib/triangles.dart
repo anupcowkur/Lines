@@ -12,20 +12,20 @@ class Triangles extends StatefulWidget {
 class _TrianglesState extends State<Triangles>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
-  List<Bubble> bubbles;
-  final int numberOfBubbles = 200;
-  final Color color = Colors.amber;
-  final double maxBubbleSize = 10.0;
+  List<Vertex> vertices;
+  final int numberOfVertices = 30;
+  final Color color = Colors.black;
+  final double vertexSize = 1.5;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize bubbles
-    bubbles = List();
-    int i = numberOfBubbles;
+    // Initialize vertices
+    vertices = List();
+    int i = numberOfVertices;
     while (i > 0) {
-      bubbles.add(Bubble(color, maxBubbleSize));
+      vertices.add(Vertex(color, vertexSize));
       i--;
     }
 
@@ -33,7 +33,7 @@ class _TrianglesState extends State<Triangles>
     _controller = new AnimationController(
         duration: const Duration(seconds: 1000), vsync: this);
     _controller.addListener(() {
-      updateBubblePosition();
+      updateVertexPosition();
     });
     _controller.forward();
   }
@@ -49,28 +49,28 @@ class _TrianglesState extends State<Triangles>
     return Scaffold(
       body: CustomPaint(
         foregroundPainter:
-            BubblePainter(bubbles: bubbles, controller: _controller),
+            VertexPainter(vertices: vertices, controller: _controller),
         size: Size(MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height),
       ),
     );
   }
 
-  void updateBubblePosition() {
-    bubbles.forEach((it) => it.updatePosition());
+  void updateVertexPosition() {
+    vertices.forEach((it) => it.updatePosition());
     setState(() {});
   }
 }
 
-class BubblePainter extends CustomPainter {
-  List<Bubble> bubbles;
+class VertexPainter extends CustomPainter {
+  List<Vertex> vertices;
   AnimationController controller;
 
-  BubblePainter({this.bubbles, this.controller});
+  VertexPainter({this.vertices, this.controller});
 
   @override
   void paint(Canvas canvas, Size canvasSize) {
-    bubbles.forEach((it) => it.draw(canvas, canvasSize));
+    vertices.forEach((it) => it.draw(canvas, canvasSize));
   }
 
   @override
@@ -79,7 +79,7 @@ class BubblePainter extends CustomPainter {
   }
 }
 
-class Bubble {
+class Vertex {
   Color colour;
   double direction;
   double speed;
@@ -87,11 +87,11 @@ class Bubble {
   double x;
   double y;
 
-  Bubble(Color colour, double maxBubbleSize) {
-    this.colour = colour.withOpacity(Random().nextDouble());
+  Vertex(Color colour, double vertexSize) {
+    this.colour = colour;
     this.direction = Random().nextDouble() * 360;
-    this.speed = 1;
-    this.radius = Random().nextDouble() * maxBubbleSize;
+    this.speed = 0.3;
+    this.radius = vertexSize;
   }
 
   draw(Canvas canvas, Size canvasSize) {
@@ -119,12 +119,8 @@ class Bubble {
 
   updatePosition() {
     var a = 180 - (direction + 90);
-    direction > 0 && direction < 180
-        ? x += speed * sin(direction) / sin(speed)
-        : x -= speed * sin(direction) / sin(speed);
-    direction > 90 && direction < 270
-        ? y += speed * sin(a) / sin(speed)
-        : y -= speed * sin(a) / sin(speed);
+    direction > 0 && direction < 180 ? x += speed : x -= speed;
+    direction > 90 && direction < 270 ? y += speed : y -= speed;
   }
 
   randomlyChangeDirectionIfEdgeReached(Size canvasSize) {
