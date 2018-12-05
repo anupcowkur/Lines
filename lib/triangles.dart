@@ -13,8 +13,7 @@ class _TrianglesState extends State<Triangles>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   List<Vertex> vertices;
-  final int numberOfVertices = 200;
-  final Color color = Colors.black;
+  final int numberOfVertices = 220;
   final double vertexSize = 1.5;
 
   @override
@@ -25,7 +24,7 @@ class _TrianglesState extends State<Triangles>
     vertices = List();
     int i = numberOfVertices;
     while (i > 0) {
-      vertices.add(Vertex(color, vertexSize));
+      vertices.add(Vertex(vertexSize));
       i--;
     }
 
@@ -70,7 +69,7 @@ class LinePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size canvasSize) {
-    Paint paint = new Paint()
+    Paint vertexPaint = new Paint()
       ..color = Colors.black
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill;
@@ -79,14 +78,19 @@ class LinePainter extends CustomPainter {
       try {
         vertices[i].adjustWithCanvas(canvasSize);
 
-        canvas.drawCircle(
-            Offset(vertices[i].x, vertices[i].y), vertices[i].radius, paint);
+        canvas.drawCircle(Offset(vertices[i].x, vertices[i].y),
+            vertices[i].radius, vertexPaint);
+
+        Paint linePaint = new Paint()
+          ..color = vertices[i].colour
+          ..strokeCap = StrokeCap.round
+          ..style = PaintingStyle.fill;
 
         canvas.drawLine(Offset(vertices[i].x, vertices[i].y),
-            Offset(vertices[i + 1].x, vertices[i + 1].y), paint);
+            Offset(vertices[i + 1].x, vertices[i + 1].y), linePaint);
 
         canvas.drawCircle(Offset(vertices[i + 1].x, vertices[i + 1].y),
-            vertices[i + 1].radius, paint);
+            vertices[i + 1].radius, vertexPaint);
       } catch (e) {}
     }
   }
@@ -104,12 +108,13 @@ class Vertex {
   double radius;
   double x;
   double y;
+  List colors = [Color(0xFF31B057), Color(0xFF388BF2), Color(0xFFFC8338)];
 
-  Vertex(Color colour, double vertexSize) {
-    this.colour = colour;
+  Vertex(double vertexSize) {
     this.direction = Random().nextDouble() * 360;
     this.speed = 0.3;
     this.radius = vertexSize;
+    this.colour = colors[Random().nextInt(colors.length)];
   }
 
   adjustWithCanvas(Size canvasSize) {
